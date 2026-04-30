@@ -19,9 +19,10 @@ Since this was my first time using n8n, I intentionally kept the workflow simple
 Overall, I really enjoyed working on this project and learned a lot about n8n and APIs. It was interesting to see how automation and AI can work together to handle repetitive cognitive tasks, turning a cluttered inbox into an organized, searchable knowledge base with minimal manual effort.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-###THE WORKFLOW:
 
-![image.png](attachment:0d7ffc5e-c0c8-4f97-a485-862e681f0020:image.png)
+### THE WORKFLOW:
+
+<img width="2534" height="1200" alt="image" src="https://github.com/user-attachments/assets/51bf3100-0c10-429e-9286-6173a79c0751" />
 
 Main Workflow:
 
