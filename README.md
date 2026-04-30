@@ -1,6 +1,7 @@
 # n8n-Email-Automation-System
 
-REFLECTION:
+### REFLECTION:
+
 The goal of this project was to build an automated email management system using n8n, AI, Gmail, and Notion. Instead of manually sorting through emails every day, I wanted an intelligent workflow that could read incoming emails, understand what they were about, categorize them by priority, save organized summaries to a Notion database, and automatically draft replies when needed to increase productivity.
 
 Building the workflow was more technically involved than expected. The initial plan used Claude as the AI model, but API credit limitations required switching to a free alternative. After testing several options including Gemini and Groq, I settled on Groq with the llama-3.1-8b-instant model, which offered the highest free tier limits and fastest response times. The most challenging parts were getting the AI output parsed correctly and mapping data between nodes, which required adding dedicated Code nodes to reformat data and handle inconsistencies in how Gmail and Groq structured their outputs.
