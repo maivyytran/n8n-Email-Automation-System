@@ -1,0 +1,627 @@
+{
+  "name": "Second Brain Email Triage System",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "maivyytran09@gmail.com",
+        "subject": "=Weekly Email Reminder - {{ $now.toFormat(\"MMMM d, yyyy\") }}",
+        "emailType": "text",
+        "message": "=You have {{ $(\"Fetch Old Needs Reply\").all().length }} emails marked \"Needs Reply\" that are older than 5 days.\n\nPlease review them in your Notion database.",
+        "options": {}
+      },
+      "id": "297221ec-6733-4aa8-a051-0c6019adbd91",
+      "name": "Send Weekly Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        960
+      ],
+      "webhookId": "3ee2bf45-8478-4f2a-a05c-5d4fcf62b363",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DbXKGcrTN8QduWQt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "=350a499e27848079993ce9bd06349503",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "={{ \"Category|select\" }}",
+              "type": "select",
+              "condition": "equals",
+              "selectValue": "Needs Reply"
+            },
+            {
+              "key": "={{ \"Date|date\" }}",
+              "type": "date",
+              "condition": "before",
+              "date": "={{ $now.minus({ days: 5 }).toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "776b602e-c4de-4cc1-b120-2a948cd0834e",
+      "name": "Fetch Old Needs Reply",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        960
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "jTnngr6hjbFk5Q7V",
+          "name": "Notion account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "e68e379d-dcf8-4a18-a3dd-6970977c51e0",
+      "name": "Weekly Reminder",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $(\"New Email Arrives\").item.json.id }}",
+        "labelIds": [
+          "Label_5060041949457948262"
+        ]
+      },
+      "id": "fc00b227-54ba-4817-aa57-38eeefbd41ff",
+      "name": "Label as Newsletter",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        784
+      ],
+      "webhookId": "a3f9d653-8e67-4603-9347-6d3e3b670887",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DbXKGcrTN8QduWQt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $(\"New Email Arrives\").item.json.id }}",
+        "labelIds": [
+          "Label_1092465962891215633"
+        ]
+      },
+      "id": "ba35dea9-c136-4d8c-9d3c-df6c070eae1c",
+      "name": "Label as FYI",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        592
+      ],
+      "webhookId": "d0625639-388f-4a01-b137-5b2a640e6008",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DbXKGcrTN8QduWQt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{ $('New Email Arrives').item.json.subject }}",
+        "message": "={{ $json.suggestedReply }}",
+        "options": {
+          "replyTo": "=  {{ $(\"New Email Arrives\").item.json.from.text.match(/<([^>]+)>/)[1] }}",
+          "threadId": "={{ $(\"New Email Arrives\").item.json.threadId }}",
+          "sendTo": "={{ $('New Email Arrives').item.json.from.value[0].address }}"
+        }
+      },
+      "id": "247b3fad-fb95-415e-a250-3a72b8c02ead",
+      "name": "Create Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1600,
+        400
+      ],
+      "webhookId": "43fcfe36-5faf-4c6c-ac7e-d1c789ac493c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DbXKGcrTN8QduWQt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $(\"New Email Arrives\").item.json.id }}",
+        "labelIds": [
+          "Label_986542020610121951"
+        ]
+      },
+      "id": "f801c6b4-a08c-4877-8cf2-fa8453bd87f8",
+      "name": "Label as TO REPLY",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        400
+      ],
+      "webhookId": "782cd66a-d7c2-4006-afea-f066c2610cb1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DbXKGcrTN8QduWQt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3ee157b1-bf28-4a73-aecf-011416c5a88a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Needs Reply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5cf07b07-3b8c-4c73-8361-6e86ec63a461"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Needs Reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "FYI",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0333113c-9b29-4839-9f84-81cfd50b164e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FYI"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Newsletter / Low Priority",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bc9aa659-7d53-44c8-a52c-5c93cbae3378"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Newsletter"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9b641267-1578-4cfc-98b1-3fc4d81deef2",
+      "name": "Route by Category",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "88fb88a6-db41-4e8e-b3b0-0a064548a616",
+      "name": "New Email Arrives",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        496
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hMxvgPppjEiraXrO",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        496
+      ],
+      "id": "6672aca4-bff3-475d-aeeb-f94361ac192b",
+      "name": "Wait",
+      "webhookId": "5f656bfd-cd06-4a12-b349-fa103218e5d3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "350a499e27848079993ce9bd06349503",
+          "mode": "id"
+        },
+        "title": "=",
+        "simple": "={{ true }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Subject|title",
+              "title": "={{ $json.subject }}"
+            },
+            {
+              "key": "Sender|rich_text",
+              "textContent": "={{ $json.sender }}"
+            },
+            {
+              "key": "Category|select",
+              "selectValue": "={{ $json.category }}"
+            },
+            {
+              "key": "Summary|rich_text",
+              "textContent": "={{ $json.summary }}"
+            },
+            {
+              "key": "Date|date",
+              "date": "={{ $json.date }}"
+            },
+            {
+              "key": "Draft Reply|rich_text",
+              "textContent": "={{ $json.suggestedReply }}"
+            },
+            {
+              "key": "Subject|title",
+              "title": "= {{ $('New Email Arrives').item.json.subject }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        496
+      ],
+      "id": "4f5f68a4-6c87-441e-bd8d-160282887abe",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "jTnngr6hjbFk5Q7V",
+          "name": "Notion account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this email and respond ONLY in JSON with no extra text:\n\n{\n  \"category\": \"Needs Reply|FYI|Newsletter\",\n  \"summary\": \"2-3 sentence summary of the email\",\n  \"suggestedReply\": \"draft reply if category is Needs Reply, otherwise empty string\"\n}\n\nSubject: {{ $('New Email Arrives').item.json.subject }}\nFrom: {{ $('New Email Arrives').item.json.from.value[0].address }}\nBody: {{ $('New Email Arrives').item.json.text.slice(0, 500) }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        496
+      ],
+      "id": "722834e1-0797-47cc-9fa3-c1c4436688c4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        224,
+        704
+      ],
+      "id": "c6b7278d-cbcd-4bcf-b0df-b4f09bf48179",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "4kUqOhk8zo3jdTgb",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.text;\n\nconst match = raw.match(/\\{[\\s\\S]*\\}/);\nconst parsed = match ? JSON.parse(match[0]) : {};\nconst data = parsed.emailAnalysis || parsed;\n\nreturn [{\n  json: {\n    category: String(data.category ?? \"FYI\"),\n    summary: String(data.summary ?? \"No summary\"),\n    suggestedReply: String(data.suggestedReply ?? \"\"),\n    sender: $('New Email Arrives').first().json.from.value[0].address,\n    senderName: $('New Email Arrives').first().json.from.value[0].name,\n    subject: String($('New Email Arrives').first().json.subject ?? \"No subject\"),\n    date: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        496
+      ],
+      "id": "9ed68261-4e55-4ffe-bcd8-354f7e551be1",
+      "name": "Parse AI Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    category: $input.first().json.property_category ?? \"FYI\",\n    messageId: $('New Email Arrives').first().json.id,\n    sender: String($('New Email Arrives').first().json.from?.[0]?.address ?? \n            $('New Email Arrives').first().json.from ?? \"Unknown\"),\n    subject: String($('New Email Arrives').first().json.subject ?? \"No subject\"),\n    summary: $input.first().json.property_summary ?? \"\",\n    suggestedReply: $input.first().json.property_draft_reply ?? \"\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        496
+      ],
+      "id": "fcb2b873-75e5-42fb-87b7-cf2a74c2aae0",
+      "name": "Pass Category Forward"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Old Needs Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Weekly Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Reminder": {
+      "main": [
+        [
+          {
+            "node": "Fetch Old Needs Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label as TO REPLY": {
+      "main": [
+        [
+          {
+            "node": "Create Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Category": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Label as TO REPLY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label as FYI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label as Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Email Arrives": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a database page": {
+      "main": [
+        [
+          {
+            "node": "Pass Category Forward",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Output": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pass Category Forward": {
+      "main": [
+        [
+          {
+            "node": "Route by Category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "abaa291e-e980-437c-8969-baf996544e51",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "704d726027f55ae7544e923931c7c0fc0946fe684a2d617d735a57b48bd0490a"
+  },
+  "id": "Am6PM8OZF4xFgEC9",
+  "tags": []
+}
