@@ -1,5 +1,7 @@
 # n8n-Email-Automation-System
 
+PowerPoint Link: https://1drv.ms/p/c/9239d57cde3fcee4/IQC_VmKVgomcT7LmEn9A8_u6AViIithznU2gxlybM8P7sl8?e=Kzwi1X
+
 ### REFLECTION:
 
 The goal of this project was to build an automated email management system using n8n, AI, Gmail, and Notion. Instead of manually sorting through emails every day, I wanted an intelligent workflow that could read incoming emails, understand what they were about, categorize them by priority, save organized summaries to a Notion database, and automatically draft replies when needed to increase productivity.
