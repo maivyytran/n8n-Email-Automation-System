@@ -17,6 +17,7 @@ Once these issues were resolved, the final workflow successfully:
 Since this was my first time using n8n, I intentionally kept the workflow simple so I could fully understand each component. However, if I had more time I would expand it in two ways. First, I would add a node that generates draft replies in my personal writing tone by referencing examples of emails I have previously sent, making the AI responses feel more authentic. Second, I would improve the draft reply functionality so that generated drafts are not only saved to my Notion database but also automatically placed in my Gmail Drafts folder, making them immediately ready to review and send.
 
 Overall, I really enjoyed working on this project and learned a lot about n8n and APIs. It was interesting to see how automation and AI can work together to handle repetitive cognitive tasks, turning a cluttered inbox into an organized, searchable knowledge base with minimal manual effort.
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -24,7 +25,7 @@ Overall, I really enjoyed working on this project and learned a lot about n8n an
 
 <img width="2534" height="1200" alt="image" src="https://github.com/user-attachments/assets/51bf3100-0c10-429e-9286-6173a79c0751" />
 
-Main Workflow:
+MAIN WORKFLOW:
 
 1. **New Email Arrives (Gmail Trigger)**:
     - Monitors Gmail inbox automatically
@@ -62,7 +63,7 @@ Main Workflow:
     - Creates a pre-written draft reply in Notion database
     - Uses the AI-generated suggested reply as the draft body
 
-Weekly Reminder Workflow:
+WEEKLY REMINDER WORKFLOW:
 
 1. **Weekly Reminder (Schedule Trigger)**
     - Triggers automatically every Monday morning at 9AM
